@@ -1,10 +1,14 @@
 import { makeStyles } from "@mui/styles";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { CryptoState } from "../../CryptoContext";
+import { CryptoState } from "../../CryptoContext.jsx";
 import { TrendingCoins } from "../../config/api.js";
 import AliceCarousel from "react-alice-carousel";
 import { Link } from "react-router-dom";
+
+export function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
 
 const useStyles = makeStyles((theme) => ({
   carousel: {
@@ -40,7 +44,7 @@ const Carousel = () => {
   }, [currency]);
 
   const items = trending.map((coin) => {
-    let profit = coin.price_change_percentage_24h;
+    let profit = coin.price_change_percentage_24h >= 0;
     return (
       <Link className={classes.carouselItem} to={`/coins/${coin.id}`}>
         <img
@@ -52,7 +56,15 @@ const Carousel = () => {
         <span>
           {coin?.symbol}
           &nbsp;
-          <span></span>
+          <span
+            style={{ color: profit > 0 ? "green" : "red", fontWeight: 500 }}
+          >
+            {profit && "+"}
+            {coin?.price_change_percentage_24h.toFixed(2)}%
+          </span>
+        </span>
+        <span style={{ fontSize: 22, fontWeight: 500 }}>
+          {currency} {numberWithCommas(coin?.current_price.toFixed(2))}
         </span>
       </Link>
     );
@@ -72,7 +84,6 @@ const Carousel = () => {
       <AliceCarousel
         mouseTracking
         infinite
-        autoPlayInterval={1000}
         animationDuration={1500}
         disableDotsControls
         responsive={responsive}

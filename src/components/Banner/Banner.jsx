@@ -9,7 +9,7 @@ const useStyles = makeStyles({
     backgroundImage: `url(${bannerImg})`,
   },
   bannerContent: {
-    height: 400,
+    height: 500,
     display: "flex",
     flexDirection: "column",
     paddingTop: 25,
@@ -52,9 +52,10 @@ const Banner = () => {
               color: "darkgray",
               textTransform: "capitalize",
               fontFamily: "Montserrat",
+              marginBottom: 70,
             }}
           >
-            Your favorite Crypto Tracker
+            Made by volo
           </Typography>
           <Carousel />
         </div>
