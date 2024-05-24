@@ -1,1 +1,1 @@
-Crypto Curriency Tracker in React 
+Crypto Tracker in React 
