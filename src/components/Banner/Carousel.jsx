@@ -37,10 +37,12 @@ const Carousel = () => {
     setTrending(data);
   };
 
-  console.log(trending);
-
   useEffect(() => {
-    fetchTrendingCoins();
+    try {
+      fetchTrendingCoins();
+    } catch (e) {
+      console.log(e);
+    }
   }, [currency]);
 
   const items = trending.map((coin) => {
