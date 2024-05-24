@@ -47,10 +47,15 @@ const CoinsTable = () => {
   const navigate = useNavigate();
 
   const fetchListingCoins = async () => {
-    setLoading(true);
-    const { data } = await axios.get(CoinList(currency));
-    setCoins(data);
-    setLoading(false);
+    try {
+      setLoading(true);
+      const { data } = await axios.get(CoinList(currency));
+      setCoins(data);
+      setLoading(false);
+    } catch (e) {
+      console.log("Error: ", e);
+      setLoading(true);
+    }
   };
 
   useEffect(() => {
