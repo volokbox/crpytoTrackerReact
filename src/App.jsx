@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes, HashRouter } from "react-router-dom";
 import Header from "./components/Header";
 import HomePage from "./pages/HomePage";
 import CoinPage from "./pages/CoinPage";
@@ -17,7 +17,7 @@ function App() {
   const classes = useStyles();
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div className={classes.App}>
         <Header />
         <Routes>
@@ -25,7 +25,7 @@ function App() {
           <Route path="/coins/:id" element={<CoinPage />} />
         </Routes>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
