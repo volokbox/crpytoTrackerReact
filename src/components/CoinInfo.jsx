@@ -5,6 +5,9 @@ import { CryptoState } from "../CryptoContext.jsx";
 import { CircularProgress, ThemeProvider, createTheme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Line } from "react-chartjs-2";
+import { chartDays } from "../config/data";
+import SelectButton from "./SelectButton.jsx";
+import "chart.js/auto";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -29,6 +32,7 @@ const CoinInfo = ({ coinId }) => {
   const [loading, setLoading] = useState(false);
   const [days, setDays] = useState(90);
   const { currency } = CryptoState();
+  const [flag, setFlag] = useState(false);
 
   const classes = useStyles();
 
@@ -53,30 +57,49 @@ const CoinInfo = ({ coinId }) => {
     },
   });
 
+  const handleDays = (newDays) => {
+    setDays(newDays);
+  };
+
   useEffect(() => {
     fetchHistoricalChart();
-  }, [currency, days, coinId]);
+  }, [currency, days]);
 
-  console.log(historicalChart);
+  // Function to downsample the data
+  const downsampleData = (data, sampleRate) => {
+    return data.filter((_, index) => index % sampleRate === 0);
+  };
+
+  // Adjust the sample rate as needed
+  const sampleRate = Math.ceil(historicalChart.length / 50); // Adjust the number of points
+
+  const downsampledChart = downsampleData(historicalChart, sampleRate);
+
+  const chartData = {
+    labels: downsampledChart.map((coin) => {
+      let date = new Date(coin[0]);
+      let time =
+        date.getHours() > 12
+          ? `${date.getHours() - 12}:${date.getMinutes()} PM`
+          : `${date.getHours()}:${date.getMinutes()} AM`;
+      return days === 1 ? time : date.toLocaleDateString();
+    }),
+    datasets: [
+      {
+        label: "Price",
+        data: downsampledChart.map((coin) => coin[1]),
+        borderColor: "purple",
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
+      },
+    ],
+  };
 
   return (
     <ThemeProvider theme={darkTheme}>
       <div className={classes.container}>
         {!loading ? (
           historicalChart.length > 0 ? (
-            <Line
-              data={{
-                labels: historicalChart.map((coin) => {
-                  let date = new Date(coin[0]);
-                  let time =
-                    date.getHours() > 12
-                      ? `${date.getHours() - 12}:${date.getMinutes()} PM`
-                      : `${date.getHours()}:${date.getMinutes()} AM`;
-                  return days === 1 ? time : date.toLocaleDateString();
-                }),
-                datasets: [{ data: historicalChart.map((coin) => coin[1]) }],
-              }}
-            />
+            <Line data={chartData} />
           ) : (
             <p>No data available</p>
           )
